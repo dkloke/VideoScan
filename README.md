@@ -13,7 +13,7 @@ Key|Action|Regular|Control|Shift
 &larr; Left arrow|Skip Back|-1s|-10s|-1m
 &rarr; Right arrow|Skip Forward|+1s|+10s|+1m
 Space bar|Pause|
-1 2 3 4 5 6 7 8 9|Playback speed|x&lt;#&gt;|x0.&lt;#&gt;
+1 2 3 4 5 6 7 8 9|Playback speed|x1-x9|x0.1-x0.9
 R, N|Reset to Normal|x1|x1&nbsp;+&nbsp;Pause
 #
 VideoScan issues commands to the &lt;`video`&gt; element as you type or click/tap while the popup is active and has focus. The responsiveness of the page's video player depends on hardware performance, network bandwidth, and on-page application code.
