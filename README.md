@@ -16,6 +16,13 @@ Space bar|Pause|
 1-9 Numbers|Playback speed|x&lt;#&gt;|x0.&lt;#&gt;
 ctrl-R, ctrl-N|Reset to Normal|x1
 #
-VideoScan issues commands to the `video` element as you type or click/tap while the popup is active and has focus. The responsiveness of the page's `video` player depends on hardware performance, network bandwidth, and on-page application code.
+VideoScan issues commands to the &lt;`video`&gt; element as you type or click/tap while the popup is active and has focus. The responsiveness of the page's video player depends on hardware performance, network bandwidth, and on-page application code.
 
 Repeated speed adjustments can cause video players to lose audio synchronization. To recover audio sync, try skipping forward/back or adjusting the video's replay position, stop and restart the player, or reload the page.
+
+The app does not send any information to the developer, and only stores user preferences locally. This app acts on the DOM &lt;`video`&gt; objects, it does not change any video or audio data, only the position and speed of replay. VideoScan currently makes no effort to be compatible with custom page code or other browser apps.
+
+## Credits
+[FontAwesome Free Fonts](https://fontawesome.com/)
+
+[Axialis IconGenerator Free Edition](https://www.axialis.com/icongenerator/)
