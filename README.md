@@ -8,13 +8,13 @@ Use keboard or mouse/touch to adjust video playback rate.
 
 Key|Action|Regular|Control|Shift
 ---|---|:-:|:-:|:-:|
-&uarr; Up arrow|Faster playrate|+0.1|+0.01|
-&darr; Down arrow|Slower playrate|-0.1|-0.01|
-&larr; Left arrow|Skip Back|-1s|-10s|-1m
-&rarr; Right arrow|Skip Forward|+1s|+10s|+1m
-Space bar|Pause|
-1 2 3 4 5 6 7 8 9|Playback speed|x1-x9|x0.1-x0.9
-R, N|Reset to Normal|x1|x1&nbsp;+&nbsp;Pause
+&uarr;&nbsp;Up&nbsp;arrow|Faster&nbsp;playrate|+0.1|+0.01|
+&darr;&nbsp;Down&nbsp;arrow|Slower&nbsp;playrate|-0.1|-0.01|
+&larr;&nbsp;Left&nbsp;arrow|Skip&nbsp;Back|-1s|-10s|-1m
+&rarr;&nbsp;Right&nbsp;arrow|Skip&nbsp;Forward|+1s|+10s|+1m
+Space&nbsp;bar|Pause|
+1 2 3 4 5 6 7 8 9|Playback&nbsp;speed|x1&nbsp;-&nbsp;x9|x0.1&nbsp;-&nbsp;x0.9
+R,&nbsp;N|Reset&nbsp;to&nbsp;Normal|x1|x1&nbsp;+&nbsp;Pause
 #
 VideoScan issues commands to the &lt;`video`&gt; element as you type or click/tap while the popup is active and has focus. The responsiveness of the page's video player depends on hardware performance, network bandwidth, and on-page application code.
 
