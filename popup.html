@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+    body {user-select: none;}
+    div {display: block; }
+    img {height: fit-content; }
+    /* Styled buttons */
+    .btn {
+        height: 1.5em;
+        width: 1.5em;
+        background-color: #E88054;
+        border: none;
+        color: white;
+        margin: 0.1em;
+        padding: 0;
+        font-size: medium;
+        cursor: pointer;
+        animation-duration: 0.1s;
+        border-radius: 3px;
+        text-align: center;
+        display:inline-block;
+    }
+    .btn:hover {background-color: #CC0000; /*#E88004;*/ }
+    .btn:active {transform: scale(0.95); }
+    .btnFlash {background-color: #CC0000; transform: scale(0.95);}
+    .btn2 {
+        width: auto;
+        margin: 0.2em;
+        padding: 0.1em 0.3em;
+        font-size: larger;
+    }
+    .fullWidth {width: 100%; }
+    .flexRow {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+    }
+    .flexColumn {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+    }
+    .flexChild {flex: 0 1 auto; }
+    h2.flexChild {
+        margin: 0;
+        padding: 0 0.5em;
+    }
+    div#status {margin: 0.2em 0; }
+    table, th, td {
+        /*table-layout: fixed;*/
+        border-collapse: collapse;
+        border: 1px solid darkgray;
+        padding: 0.5em;
+        font-size: 16px;
+    }
+    table { margin-top: 0.5em; }
+    thead { background-color: aliceblue; }
+    tbody > tr:nth-child(even) {background-color: #f0f0f4; }
+    td {border: none;}
+    #help {
+        position:absolute; 
+        top:2px; 
+        right:2px; 
+        color:cornflowerblue;
+        cursor: pointer;
+        background-color: white;
+        user-select: auto;
+    }
+    #title { 
+        justify-content: flex-start;
+    }
+    #status {width: 10.5em;}
+    .hidden { display: none; }
+    .red {color:red;}
+    .blue {color:blue;}
+        </style>
+        <link href="fontawesome-free-5.7.2-web/css/all.dk.css" rel="stylesheet"></link>
+        <script defer src="chrome-extension-async.js"></script>
+        <script defer src="VScommon.js"></script>
+        <script defer src="popup.js"></script>
+    </head>
+<body>
+    <i id='help' class="far fa-question-circle" title="Toggle Action/Help"></i>
+    <div id='logo' class="flexRow toggleStatus" title="Double click to show/hide status">
+        <img class="flexChild" src="images/videoscan32.png">
+        <h2 class="flexChild">VideoScan</h2>
+        </img>
+    </div>
+    <div id='actionDiv' class="flexColumn fullWidth">
+        <div class="flexRow flexChild">
+            <div class="btn flexChild" id="arrowUp" tab="1" title="Slower">
+                <i class="fa fa-arrow-up"></i>
+            </div>
+        </div>
+        <div class="flexRow flexChild">
+            <div class="btn flexChild" id="arrowLeft" tab="2" title="Back 1 sec (ctrl x0.1)">
+                <i class="fa fa-arrow-left"></i>
+            </div>
+            <div class="btn flexChild" id="arrowDown" tab="3" title="Faster">
+                <i class="fa fa-arrow-down"></i>
+            </div>
+            <div class="btn flexChild" id="arrowRight" tab="4" title="Forward 1 sec (ctrl x0.1)">
+                <i class="fa fa-arrow-right"></i>
+            </div>
+        </div>
+        <div class="flexRow flexChild">
+            <div class="btn flexChild fullWidth" id="spaceBar" tab="5" title="Pause / Play">
+                <i class="fa fa-stop"></i>
+                space
+            </div>
+        </div>
+        <div class="flexChild toggleStatus" id="status" title="Double click to show/hide status">
+            No active &lt;video&gt;.<br>
+            Please <strong>start the video player</strong> first.
+            </br>
+        </div>
+        <div class="flexRow flexChild">
+            <div class="btn btn2 flexChild" id="resetTo1" tab="1" title="ctrl-R / ctrl-N">
+                Reset to&nbsp;Normal
+            </div>
+        </div>
+    </div>
+    <div id='helpDiv' class='hidden'>
+        <table>
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Action</th>
+                    <th align="center">Regular</th>
+                    <th align="center">Control<br>(x&nbsp;0.1)</th>
+                    <th align="center">Shift<br>(x&nbsp;10)</th>
+                    <th align="center">Alt</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><i class="fa fa-arrow-up"></i>&emsp;Up</td>
+                    <td>Faster playrate</td>
+                    <td align="center">+0.1</td>
+                    <td align="center">+0.01</td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-arrow-down"></i>&emsp;Down</td>
+                    <td>Slower playrate</td>
+                    <td align="center">-0.1</td>
+                    <td align="center">-0.01</td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-arrow-left"></i>&emsp;Left</td>
+                    <td>Skip Back</td>
+                    <td align="center">-1s</td>
+                    <td align="center">-0.1s</td>
+                    <td align="center">-10s</td>
+                    <td align="center">-1m</td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-arrow-right"></i>&emsp;Right</td>
+                    <td>Skip Forward</td>
+                    <td align="center">+1s</td>
+                    <td align="center">+0.1s</td>
+                    <td align="center">+10s</td>
+                    <td align="center">+1m</td>
+                </tr>
+                <tr>
+                    <td>Space bar</td>
+                    <td>Pause / Play</td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <tr>
+                    <td>1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5, 6, 7, 8, 9</td>
+                    <td>Playback speed</td>
+                    <td align="center">x1&nbsp;-&nbsp;x9</td>
+                    <td align="center">x0.1&nbsp;-&nbsp;x0.9</td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <tr>
+                    <td>R, N</td>
+                    <td>Reset&nbsp;to&nbsp;Normal</td>
+                    <td align="center">x1</td>
+                    <td align="center">x1&nbsp;+&nbsp;Pause</td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <tr>
+                    <td>S, D</td>
+                    <td>Toggle status</td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+                <tr>
+                    <td>H, F1</td>
+                    <td>Toggle help</td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                    <td align="center"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body></html>
