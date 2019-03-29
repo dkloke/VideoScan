@@ -1,4 +1,7 @@
+const fontSizes = ["xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", ]
 const makeSpan = (text,colorClass) => `<span class="${colorClass}">${text}</span>`
+
+// read/write bitmaps from a master array (which then becomes very fragile!!!)
 
 const writeBM = (key) => 
     (mask) => key.reduce((a,e,i)=> mask.indexOf(e)>-1 ? a += 1 << i : a , 0)
@@ -34,8 +37,6 @@ const fetchList = {
         'video data url',
         'current audio volume'
     ],
-    encodeBM: writeBM(this.master),
-    decodeBM: readBM(this.master),
     default: [
         'currentTime',
         'duration',
@@ -44,6 +45,8 @@ const fetchList = {
         'playbackRate',
         'readyState',
     ],
+    encodeBM: writeBM(this.master),
+    decodeBM: readBM(this.master),
 }
 const VSoptions = [
     {name:"selUISize",       origin:"large",},

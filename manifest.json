@@ -1,7 +1,7 @@
 {
   "name": "VideoScan",
-  "version": "1.0.1",
-  "description": "Adjust playback of video elements on page.",
+  "version": "1.0.2",
+  "description": "Adjust playback speed of video elements on page.",
   "permissions": ["activeTab", "tabs", "declarativeContent","storage"],
   "options_page": "options.html",
   "background": {
@@ -31,5 +31,8 @@
       "description": "Toggle VideoScan"
     }
   },
+  "web_accessible_resources": [
+    "popup.html"
+  ],
   "manifest_version": 2
 }

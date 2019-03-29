@@ -1,35 +1,57 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <style>
-    body {user-select: none;}
+<!-- =============================== -->
+<style>
+    body {
+        user-select: none; 
+        color:#444;
+        margin: 0.4em;
+    }
     div {display: block; }
     img {height: fit-content; }
     /* Styled buttons */
     .btn {
         height: 1.5em;
         width: 1.5em;
-        background-color: #E88054;
-        border: none;
+        background-color: sandybrown; /* sandybrown; */
+        /*border: none;*/
+        border: 2px solid none; 
         color: white;
         margin: 0.1em;
         padding: 0;
-        font-size: medium;
+        font-size: inherit;
         cursor: pointer;
         animation-duration: 0.1s;
         border-radius: 3px;
         text-align: center;
         display:inline-block;
     }
-    .btn:hover {background-color: #CC0000; /*#E88004;*/ }
-    .btn:active {transform: scale(0.95); }
-    .btnFlash {background-color: #CC0000; transform: scale(0.95);}
+    .btn:hover {background-color: orange;/* #CC0000; */ /*#E88004;*/ }
     .btn2 {
-        width: auto;
-        margin: 0.2em;
-        padding: 0.1em 0.3em;
-        font-size: larger;
+        background-color: none;
+        color: inherit;
     }
+    .btn2:hover {color: orange;/* #CC0000; */ /*#E88004;*/ }
+    .btn2disabled {
+        color:#eee;
+    }
+    .btn2disabled:hover {
+        color:#ddd;
+    }
+    .btnFlash {
+        background-color: orangered; 
+        transform: scale(0.95); 
+    }
+    i.btnFlash {
+        background-color: initial; 
+        color: orangered;
+        transform: scale(0.95); 
+    }
+    .btn:active, .btn2:active, .btn2:active, .altBtn:active {
+        transform: scale(0.95); 
+    }
+
     .fullWidth {width: 100%; }
     .flexRow {
         display: flex;
@@ -47,23 +69,23 @@
         margin: 0;
         padding: 0 0.5em;
     }
-    div#status {margin: 0.2em 0; }
     table, th, td {
         /*table-layout: fixed;*/
         border-collapse: collapse;
         border: 1px solid darkgray;
-        padding: 0.5em;
+        padding: 0.3em 0.5em;
         font-size: 16px;
     }
     table { margin-top: 0.5em; }
     thead { background-color: aliceblue; }
     tbody > tr:nth-child(even) {background-color: #f0f0f4; }
     td {border: none;}
+    #status:not(:empty) {margin-top: 0.2em; }
     #help {
         position:absolute; 
         top:2px; 
         right:2px; 
-        color:cornflowerblue;
+        color:skyblue;
         cursor: pointer;
         background-color: white;
         user-select: auto;
@@ -72,10 +94,31 @@
         justify-content: flex-start;
     }
     #status {width: 10.5em;}
+    #logo {
+        margin-bottom: 0.5em;
+         padding-bottom: 0.5em; 
+         border-bottom: 1px solid #ddd; 
+    }
     .hidden { display: none; }
     .red {color:red;}
     .blue {color:blue;}
-        </style>
+    .altBtn {
+        width: 1.4em;
+        height: 1.4em;
+        border: 2px solid sandybrown; 
+        color: inherit;
+        background-color: khaki; 
+        font-weight: normal;
+    }
+    .shadow {
+        width: 3em;
+        text-align: center;
+        font-size: inherit;
+        font-weight: bold;
+    }
+</style>
+<!-- =============================== -->
+        <link href="hint.min.css" rel="stylesheet"></link>
         <link href="fontawesome-free-5.7.2-web/css/all.dk.css" rel="stylesheet"></link>
         <script defer src="chrome-extension-async.js"></script>
         <script defer src="VScommon.js"></script>
@@ -90,37 +133,28 @@
     </div>
     <div id='actionDiv' class="flexColumn fullWidth">
         <div class="flexRow flexChild">
-            <div class="btn flexChild" id="arrowUp" tab="1" title="Slower">
-                <i class="fa fa-arrow-up"></i>
-            </div>
+            <div  aria-title="Current Playback Speed" class="shadow flexChild" id="currentSpeed">x1</div>
+            <div  aria-title="Faster" class="btn flexChild altBtn" id="arrowUp" tab="1"><i class="fa fa-arrow-up"></i></div>
+            <div  aria-title="Reset to 1" class="shadow flexChild"><i id="resetTo1" class="fa fa-undo btn2 btn2disabled"></i></div>
         </div>
         <div class="flexRow flexChild">
-            <div class="btn flexChild" id="arrowLeft" tab="2" title="Back 1 sec (ctrl x0.1)">
-                <i class="fa fa-arrow-left"></i>
-            </div>
-            <div class="btn flexChild" id="arrowDown" tab="3" title="Faster">
-                <i class="fa fa-arrow-down"></i>
-            </div>
-            <div class="btn flexChild" id="arrowRight" tab="4" title="Forward 1 sec (ctrl x0.1)">
-                <i class="fa fa-arrow-right"></i>
-            </div>
+            <div  aria-title="Back 1 sec (ctrl x0.1)" class="btn flexChild" id="arrowLeft" tab="2"><i class="fa fa-arrow-left"></i></div>
+            <div  aria-title="Slower" class="btn flexChild altBtn" id="arrowDown" tab="3"><i class="fa fa-arrow-down"></i></div>
+            <div  aria-title="Forward 1 sec (ctrl x0.1)" class="btn flexChild" id="arrowRight" tab="4"><i class="fa fa-arrow-right"></i></div>
         </div>
         <div class="flexRow flexChild">
-            <div class="btn flexChild fullWidth" id="spaceBar" tab="5" title="Pause / Play">
-                <i class="fa fa-stop"></i>
-                space
-            </div>
+            <div  aria-title="Pause / Play" class="btn flexChild fullWidth" id="spaceBar" tab="5"><i class="fa fa-stop"></i>&ensp;space</div>
         </div>
-        <div class="flexChild toggleStatus" id="status" title="Double click to show/hide status">
+        <div  aria-title="Double click to show/hide status" class="flexChild toggleStatus" id="status">
             No active &lt;video&gt;.<br>
             Please <strong>start the video player</strong> first.
             </br>
         </div>
-        <div class="flexRow flexChild">
+<!--         <div class="flexRow flexChild">
             <div class="btn btn2 flexChild" id="resetTo1" tab="1" title="ctrl-R / ctrl-N">
                 Reset to&nbsp;Normal
             </div>
-        </div>
+        </div> -->
     </div>
     <div id='helpDiv' class='hidden'>
         <table>
@@ -209,5 +243,8 @@
                 </tr>
             </tbody>
         </table>
+        <p class="blueLine">
+            <span class="red">NETFLIX</span> is auto-detected. In <span class="red">NETFLIX</span> mode, the <i class="fa fa-arrow-left"></i>/<i class="fa fa-arrow-right"></i>/<i class="fa fa-pause"></i>/<i class="fa fa-play"></i> keys are forwarded to Netflix's "native" controller, which has fixed +/- 10 second forward/back scrolling and makes its own choices about pausing. VideoScan's replay speed conrols still work. VideoScan does not interact with other custom controllers at this time.
+        </p>
     </div>
 </body></html>

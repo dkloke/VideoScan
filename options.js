@@ -7,7 +7,7 @@
 // assumes/uses VScommon.js
 
 const errorHandler = error => {
-    console.warn("(%i) %o",state.errorCount,error)
+    console.warn(error)
 }
 // factory
 const genSaveEventValue = ({name, kind = "value", convert}) => (event) => {
@@ -18,7 +18,7 @@ const genSaveEventValue = ({name, kind = "value", convert}) => (event) => {
     o[name] = !!convert 
         ? typeof convert === 'function'
             ? convert(value)
-            : typeof window[convert] ===' function'
+            : typeof window[convert] ==='function'
                 ? window[convert](value) 
                 : (()=>{throw `Unable to process convert = "${convert.toString()}"`})()
         : value
@@ -28,11 +28,12 @@ const genSaveEventValue = ({name, kind = "value", convert}) => (event) => {
         })
         .catch(errorHandler)
 }
-const checkBoxLine = ([property, description, selected]) =>
+const checkBoxElement = ([property, description, selected]) =>
 `<label class="checkBox">${makeSpan(property,'itemTitle')}&emsp;${description}
     <input type="checkbox" id="${property}" value="${property}" ${selected?'checked':''} name="checks1[]">
     <span class="checkmark"></span>
 </label>`
+
 const multiCheckStatus = document.getElementById('multiCheckStatus')
 const getCheckGroup = () => [...document.querySelectorAll('input[name="checks1[]"]')]
 const getCheckGroupValues = () => getCheckGroup().reduce((a,e)=>e.checked?[...a,e.id]:a,[])
@@ -66,7 +67,7 @@ const init = (options) => {
                     const sel = value.hasOwnProperty(e.name) && Array.isArray(value[e.name])?value[e.name]:e.origin
                     const work = fetchList.master.map((e,i)=>([e,fetchList.descr[i],sel.indexOf(e)>-1]))
                     multiCheckStatus.innerHTML=work
-                        .map(a=>checkBoxLine(a))
+                        .map(a=>checkBoxElement(a))
                         .join('\n')
                         + multiCheckStatus.innerHTML
                     getCheckGroup().forEach(e=>e.addEventListener('change', multiHandler))       
