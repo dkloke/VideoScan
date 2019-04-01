@@ -25,6 +25,10 @@ Repeated speed adjustments can cause video players to lose audio synchronization
 The app does not send any information to the developer, and only stores user preferences locally. This app acts on the DOM &lt;`video`&gt; objects, it does not change any video or audio data, only the position and speed of replay. VideoScan currently makes no effort to be compatible with custom page code or other browser apps.
 
 ## Credits
+[chromeExtensionAsync by KeithHenry](https://github.com/KeithHenry/chromeExtensionAsync)
+
 [FontAwesome Free Fonts](https://fontawesome.com/)
 
 [Axialis IconGenerator Free Edition](https://www.axialis.com/icongenerator/)
+
+
