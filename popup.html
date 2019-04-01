@@ -3,20 +3,31 @@
     <head>
 <!-- =============================== -->
 <style>
-    body {
+    html, body {
         user-select: none; 
         color:#444;
-        margin: 0.4em;
+        margin: 0;
+        padding: 0.4em;
     }
+    #helpDiv {
+        user-select: auto;
+    }
+    .darkMode {
+        color: #bbb;
+        background-color: #302828;
+        /*font-size: 1em;*/
+    }
+
     div {display: block; }
-    img {height: fit-content; }
+    img {width: 25vw; }
+
     /* Styled buttons */
     .btn {
         height: 1.5em;
         width: 1.5em;
-        background-color: sandybrown; /* sandybrown; */
+        background-color: #fb8c00; /* sandybrown; */
         /*border: none;*/
-        border: 2px solid none; 
+        border: 1vw solid none; 
         color: white;
         margin: 0.1em;
         padding: 0;
@@ -26,18 +37,36 @@
         border-radius: 3px;
         text-align: center;
         display:inline-block;
+        transition: background-color 0.1s ease-out;
     }
-    .btn:hover {background-color: orange;/* #CC0000; */ /*#E88004;*/ }
+    .altBtn {
+        width: 1.4em;
+        height: 1.4em;
+        border: 1vw solid sandybrown; 
+        color: initial;
+        background-color: khaki; 
+        font-weight: normal;
+    }
     .btn2 {
         background-color: none;
         color: inherit;
+        cursor: pointer;
     }
-    .btn2:hover {color: orange;/* #CC0000; */ /*#E88004;*/ }
+    .btn2:hover, altBtn:hover {
+        color: #E65100;/* #CC0000; */ /*#E88004;*/ 
+    }
     .btn2disabled {
         color:#eee;
     }
+    .darkMode .btn2disabled {
+        color: #424242;
+    }
     .btn2disabled:hover {
         color:#ddd;
+        cursor: default;
+    }
+    .darkMode .btn2disabled:hover {
+        color: #616161;
     }
     .btnFlash {
         background-color: orangered; 
@@ -48,7 +77,9 @@
         color: orangered;
         transform: scale(0.95); 
     }
-    .btn:active, .btn2:active, .btn2:active, .altBtn:active {
+    .btn:hover {background-color: #E65100;/* orange; #CC0000; *#E88004;*/ }
+    .btn:active, .altBtn:active {background-color: orangered !important; }
+    .btn:active, .btn2:active, .altBtn:active {
         transform: scale(0.95); 
     }
 
@@ -58,6 +89,9 @@
         flex-flow: row nowrap;
         justify-content: center;
         align-items: center;
+    }
+    div #logo.flexRow {
+        align-items: flex-end;
     }
     .flexColumn {
         display: flex;
@@ -78,57 +112,59 @@
     }
     table { margin-top: 0.5em; }
     thead { background-color: aliceblue; }
+    .darkMode thead { background-color: #37474f; }
     tbody > tr:nth-child(even) {background-color: #f0f0f4; }
+    .darkMode tbody > tr:nth-child(even) {background-color: #424242; }
     td {border: none;}
-    #status:not(:empty) {margin-top: 0.2em; }
-    #help {
+    #helpIcon {
         position:absolute; 
         top:2px; 
         right:2px; 
         color:skyblue;
         cursor: pointer;
-        background-color: white;
-        user-select: auto;
+        background-color: inherit;
+        font-size: calc(0.8em + 1vw);
     }
-    #title { 
+    .darkMode #helpIcon {
+        color:steelblue;
+    }
+    div #title { 
         justify-content: flex-start;
     }
-    #status {width: 10.5em;}
-    #logo {
+    div #status {min-width: 10.5em;}
+    div #status:not(:empty) {margin-top: 0.2em; }
+    #status p {margin:0;}
+    #status p>span {float:right; font-weight:bold;}
+    div #logo {
         margin-bottom: 0.5em;
-         padding-bottom: 0.5em; 
-         border-bottom: 1px solid #ddd; 
+        padding-bottom: 0.5em; 
+        border-bottom: 1px solid #ddd; 
     }
     .hidden { display: none; }
     .red {color:red;}
-    .blue {color:blue;}
-    .altBtn {
-        width: 1.4em;
-        height: 1.4em;
-        border: 2px solid sandybrown; 
-        color: inherit;
-        background-color: khaki; 
-        font-weight: normal;
-    }
+    .blue {color:#2196f3;}
     .shadow {
         width: 3em;
         text-align: center;
         font-size: inherit;
         font-weight: bold;
     }
+    .title {
+        font-size: 10vw;
+    }
 </style>
 <!-- =============================== -->
-        <link href="hint.min.css" rel="stylesheet"></link>
+        <!-- <link href="hint.min.css" rel="stylesheet"></link> -->
         <link href="fontawesome-free-5.7.2-web/css/all.dk.css" rel="stylesheet"></link>
         <script defer src="chrome-extension-async.js"></script>
         <script defer src="VScommon.js"></script>
         <script defer src="popup.js"></script>
     </head>
 <body>
-    <i id='help' class="far fa-question-circle" title="Toggle Action/Help"></i>
-    <div id='logo' class="flexRow toggleStatus" title="Double click to show/hide status">
-        <img class="flexChild" src="images/videoscan32.png">
-        <h2 class="flexChild">VideoScan</h2>
+    <i id='helpIcon' class="far fa-question-circle" aria-title="Toggle Action/Help"></i>
+    <div id='logo' class="flexRow ctrlStatus" aria-title="Double click to show/hide status">
+        <img class="flexChild" src="images/videoscan128.png">
+        <h2 class="flexChild title">VideoScan</h2>
         </img>
     </div>
     <div id='actionDiv' class="flexColumn fullWidth">
@@ -145,7 +181,7 @@
         <div class="flexRow flexChild">
             <div  aria-title="Pause / Play" class="btn flexChild fullWidth" id="spaceBar" tab="5"><i class="fa fa-stop"></i>&ensp;space</div>
         </div>
-        <div  aria-title="Double click to show/hide status" class="flexChild toggleStatus" id="status">
+        <div  aria-title="Double click to show/hide status" class="flexChild ctrlStatus" id="status">
             No active &lt;video&gt;.<br>
             Please <strong>start the video player</strong> first.
             </br>
@@ -175,7 +211,7 @@
                     <td align="center">+0.1</td>
                     <td align="center">+0.01</td>
                     <td align="center"></td>
-                    <td align="center"></td>
+                    <td align="center">Volume +0.1</td>
                 </tr>
                 <tr>
                     <td><i class="fa fa-arrow-down"></i>&emsp;Down</td>
@@ -183,7 +219,7 @@
                     <td align="center">-0.1</td>
                     <td align="center">-0.01</td>
                     <td align="center"></td>
-                    <td align="center"></td>
+                    <td align="center">Volume -0.1</td>
                 </tr>
                 <tr>
                     <td><i class="fa fa-arrow-left"></i>&emsp;Left</td>
@@ -231,7 +267,7 @@
                     <td align="center"></td>
                     <td align="center"></td>
                     <td align="center"></td>
-                    <td align="center"></td>
+                    <td align="center">Toggle dark</td>
                 </tr>
                 <tr>
                     <td>H, F1</td>

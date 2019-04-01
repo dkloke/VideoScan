@@ -3,6 +3,7 @@
 
 <head>
     <style>
+
     body {
         font-family: "Segoe UI", Tahoma, sans-serif;
         font-size: large;
@@ -99,6 +100,7 @@
     .itemTitle {font-weight:bold; width:8em; float:left; text-align: right}
     label.checkBox:hover {background-color: #f6f6f8; }
     .fa {color:#666; font-size: 14px;}
+
     </style>
     <link rel="stylesheet" href="customControls.css">
     <link rel="stylesheet" href="fontawesome-free-5.7.2-web/css/all.dk.css">
@@ -123,8 +125,8 @@
     </div>
     <!-- =============================== -->
     <div class="marPad blueLine">
-        <label for='selUISize'>Select size for popup buttons:</label>
-            <select id='selUISize' type="select">
+        <label for='optUISize'>Select size for popup buttons:</label>
+            <select id='optUISize' type="select">
                 <option>xx-small</option>
                 <option>x-small</option>
                 <option>small</option>
@@ -138,32 +140,39 @@
     </div>
     <!-- =============================== -->
     <div class="marPad blueLine">
-        <label class="checkBox" for="selHideLogo">Hide logo for compact display.
-            <input type="checkbox" id="selHideLogo" name="selHideLogo">
+        <label class="checkBox" for="optHideLogo">Hide logo for compact display.
+            <input type="checkbox" id="optHideLogo" name="optHideLogo">
             <span class="checkmark"></span>
         </label>
     </div>
     <!-- =============================== -->
     <div class="marPad blueLine">
-        <label class="checkBox" for="selHideStatus">Initially hide status display (double-click popup to show/hide).
-            <input type="checkbox" id="selHideStatus" name="selHideStatus">
+        <label class="checkBox" for="optHideStatus">Initially hide status display (S or D to toggle).
+            <input type="checkbox" id="optHideStatus" name="optHideStatus">
             <span class="checkmark"></span>
         </label>
     </div>
     <!-- =============================== -->
     <div class="marPad blueLine">
-        <label for='selRefreshRate'>Select elements for status display:</label>
-        <div id='multiCheckStatus' class="marPad blueLine">
+        <label class="checkBox" for="optDarkMode">Start in dark mode (alt-D or alt-S to toggle). No I can't do anything about the white borders :p.
+            <input type="checkbox" id="optDarkMode" name="optDarkMode">
+            <span class="checkmark"></span>
+        </label>
+    </div>
+    <!-- =============================== -->
+    <div class="marPad blueLine">
+        <label for='optRefreshRate'>Select elements for status display:</label>
+        <div id='optStatusItems' class="marPad blueLine">
             <div class="marPad2">
-                <button id="resetDefaults" class="btn">Reset defaults</button>
+                <button id="resetDefaultChecks" class="btn">Reset default selection</button>
             </div>
         </div>
         <p>Some values are converted for legibility.</p>
     </div>
     <!-- =============================== -->
     <div class="marPad blueLine">
-        <label for='selRefreshRate'>Select refresh rate for popup status:</label>
-            <select id='selRefreshRate' type="select">
+        <label for='optRefreshRate'>Select refresh rate for popup status:</label>
+            <select id='optRefreshRate' type="select">
                 <option value=200>200ms</option>
                 <option value=250>250ms</option>
                 <option value=333>333ms</option>
@@ -172,7 +181,14 @@
                 <option value=2000>2s</option>
                 <option value=0>disabled</option>
             </select>
-        <p>Faster settings can hurt performance in slower environments. If disabled, the status will only refresh after a keystroke or mouse click, it will not detect the effects of other controls on the &lt;video&gt; element.</p>
+        <p>Faster settings can hurt performance in slower environments. If disabled, the status will only refresh after a keystroke or mouse click, it will not detect the effects of other controls on the &lt;video&gt; element</p>
+    </div>
+    <!-- =============================== -->
+    <div class="marPad blueLine">
+        <p>Restore default settings.</p>
+        <div>
+            <button id="resetDefaults" class="btn marPad2">Reset all options</button>
+        </div>
     </div>
     <!-- =============================== -->
     <div class="marPad">
@@ -252,7 +268,7 @@
                     <td align="center"></td>
                     <td align="center"></td>
                     <td align="center"></td>
-                    <td align="center"></td>
+                    <td align="center">Toggle dark</td>
                 </tr>
                 <tr>
                     <td>H, F1</td>
@@ -268,9 +284,11 @@
         <p class="blueLine">
             <span class="red">NETFLIX</span> is auto-detected. In <span class="red">NETFLIX</span> mode, the <i class="fa fa-arrow-left"></i>/<i class="fa fa-arrow-right"></i>/<i class="fa fa-pause"></i>/<i class="fa fa-play"></i> keys are forwarded to Netflix's "native" module, which has fixed +/- 10 second forward/back scrolling and makes its own choices about pausing. VideoScan's replay speed conrols still work. VideoScan does not interact with other custom controllers at this time.
         </p>
+        <!-- =============================== -->
         <p>This app does not send any information to the developer, and stores user preferences locally. VideoScan may not be compatible with on-page code or other browser apps.</p>
         <p>Repeated speed adjustments can cause video players to lose audio synchronization. To recover audio sync, try skipping forward/back or adjusting the video's replay position, stop and restart the player, or reload the page.</p>
     </div>
+    <!-- =============================== -->
     <div class="marPad blueLine flexRow">
         <div class="flexChild">
             <h4>Acknowledgements &amp; Credits</h4>

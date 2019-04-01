@@ -18,14 +18,26 @@ const arrowRight   = document.getElementById('arrowRight')
 const spaceBar     = document.getElementById('spaceBar')
 const statusDiv    = document.getElementById('status')
 const helpDiv      = document.getElementById('helpDiv')
-const help         = document.getElementById('help')
+const helpIcon     = document.getElementById('helpIcon')
 
 const listenerControls = [arrowUp, arrowLeft, arrowDown, arrowRight, spaceBar, resetTo1]
-const resizeControls   = [...listenerControls, ...document.querySelectorAll('.shadow')]
-const helpControls     = [help,helpDiv]
+const resizeControls   = [...document.querySelectorAll('#logo, #actionDiv')]
+const helpControls     = [helpIcon,helpDiv]
 
 // consts and funcs
-const state = {mode:'normal', running:true, errorCount:0}
+const state = {mode:'normal', errorCount:0}
+
+const modes= {
+    normal:'normal',
+    netflix: makeSpan("NETFLIX","red"),
+    disabled: makeSpan("disabled","blue"),
+}
+const errorHandler = (error=Error('(none)')) => {
+    if(++state.errorCount<3){
+        state.mode=modes.disabled
+    }
+    console.warn("(%o) %o",state.errorCount,error)
+}
 
 const arePlaying = (arrVS) => Array.isArray(arrVS) 
     ? arrVS.filter(e => !e.paused).length 
@@ -40,15 +52,20 @@ const rxIsDigit  = /^[1-9]$/
 const getIcon= (element) => element.children[0]
 
 const toggleStatus = () =>{
-    state.hiddenStatus=!state.hiddenStatus
-    execVS()
-    // state.hiddenStatus=statusDiv.classList.toggle('hidden')
+        statusDiv.classList.toggle('hidden')
 }
 const toggleHelp = () =>{
     actionDiv.classList.toggle('hidden')
     helpDiv.classList.toggle('hidden')
 }
-const setSpaceIcon = (playing = arePlaying()) => {
+const toggleDarkMode = () => {
+    const self = toggleDarkMode
+    if(!self.body){
+        [self.body]=document.getElementsByTagName('body')
+    }
+    self.body.classList.toggle('darkMode')
+}
+const syncSpaceIcon = (playing = arePlaying()) => {
     const classList = getIcon(spaceBar).classList
     classList.remove("fa-stop")
     classList.toggle("fa-play",!playing)
@@ -57,99 +74,126 @@ const setSpaceIcon = (playing = arePlaying()) => {
 const getProps = (obj,propList) =>{
     return propList.reduce((a,e)=>{a[e]=obj[e];return a},{})
 }
-const createStatus =  (vid,list) =>{
-    if(state.hiddenStatus){
-        return ''
-        //list=['playbackRate']
-    }
-    const set = getProps(vid,list)
+
+const formatVid = (set) => {    
     if(set.hasOwnProperty('mode')) 
-        set.mode=!state.running?makeSpan("disabled","blue"):state.netflix?makeSpan("NETFLIX","red"):'normal'
-    if(set.readyState) 
-        set.readyState=['no data','metadata','data','loading','loaded'][set.readyState]
-    Object.keys(set).forEach(e=>{
+        set.mode=state.mode
+    if(set.hasOwnProperty('readyState')) 
+        set.readyState=['no data (0)','metadata (1)','data (2)','loading (3)','loaded (4)',][set.readyState]
+    return Object.keys(set).reduce((a,e)=>{
         switch (typeof set[e]){
-            case 'boolean':
-                set[e]=['no','yes'][0+set[e]]
+            case 'boolean': a[e]=['no','yes'][0+set[e]]
                 break
-            case 'number':
-                set[e]=set[e].toFixed(3)
+            case 'number': a[e]=set[e].toFixed(3)
                 break
-            case 'undefined':
-                set[e]='?'
+            case 'undefined': a[e]='?'
                 break
-            case 'null':
-                set[e]='-'
+            case 'null': a[e]='-'
                 break
-            default:
+            default: a[e]=set[e].toString()
         }
-    })
-    const result = Object.keys(set)
-        .map(e => `${e}:<span style='float:right'><strong>${set[e]}</strong></span>`)
-        .join('<br>')
-    return  result
+        return a
+    },{})
+}
+
+
+const idPrefix = 'VS_'
+const idQuery = ()=>`span[id^="${idPrefix}"]`
+const createStatus =  (formatted,target) =>{
+    while(target.firstChild && target.removeChild(target.firstChild));
+    const result = Object.keys(formatted)
+        .forEach(name => {
+            let p=document.createElement('p'),
+                s=document.createElement('span')
+            p.innerText=name
+            s.innerText=formatted[name]
+            s.id=idPrefix+name
+            p.appendChild(s)
+            target.appendChild(p)
+        })
+}
+
+const updateStatus = (vid={playbackRate:1},selection) => {
+    if (vid) {
+        const rate = (Math.round(vid.playbackRate*100)/100)
+        currentSpeed.innerText =isNaN(rate)?'x?':'x'+rate
+        resetTo1.classList.toggle('btn2disabled',vid.playbackRate===1)  
+        const formatted = formatVid(getProps(vid,selection))
+        if( !document.querySelectorAll(idQuery()).length ){
+            createStatus(formatted,statusDiv)
+        }
+        Object.keys(formatted).forEach(k=>{
+            const e=document.querySelector('#'+idPrefix+k)
+            if(e && e.innerHTML!=formatted[k])
+                e.innerHTML=formatted[k]
+        })
+    } else {
+        errorHandler(Error('Status update failed, object: "vid" was empty'))
+        // take the remedy of the worst recoverable case: reset
+        execVS(initVS)
+    }
 }
 
 const DUMMY_ID = 'VIDEOSPEED_DUMMY'
 const ABS_MAX_SPEED = 9
 const ABS_MIN_SPEED = 0.1 //0.07
-const fetchVideos = '[...document.querySelectorAll("video")].reduce((a,e)=>e.duration?(a.push(e),a):a,[])'
 
+// commands for execVS
+const fetchVideos = '[...document.querySelectorAll("video")].reduce((a,e)=>e.duration?(a.push(e),a):a,[])'
 const initVS        = ({}={})                      => `${fetchVideos};`
-const getStatusVS   = (list=fetchList.master)      => `${fetchVideos}.map(e=>{const {${list}}=e;return {${list}};});`
+const getStatusVS   = (list=fetchList.list)        => `${fetchVideos}.map(e=>{const {${list}}=e;return {${list}};});`
 
 const skipVS        = ({value=0,targets=[0]}={})   => (value==0)
-                    ?''
-                    : state.netflix
-                        ? (`document.querySelector('button[aria-label="Seek ${value>0?"Forward":"Back"}"]').click();`)
-                        : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.currentTime += ${value}});`
-
-
-const pauseVS       = ({targets=[0]}={})           => state.netflix
+                        ?''
+                        : state.mode===modes.netflix
+                            ? (`document.querySelector('button[aria-label="Seek ${value>0?"Forward":"Back"}"]').click();`)
+                            : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.currentTime += ${value}});`
+const pauseVS       = ({targets=[0]}={})           => state.mode===modes.netflix
                             ? `document.querySelector('button[aria-label="Pause"]').click();`
                             : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{if(!e.paused){e.VS_PAUSED=true;e.pause()}});`
 const unPauseVS     = ({}={})                      => `${fetchVideos}.filter(e=>e.VS_PAUSED).forEach(e=>{e.VS_PAUSED=false;e.play()});`
-const playVS        = ({targets=[0]}={})           => state.netflix
+const playVS        = ({targets=[0]}={})           => state.mode===modes.netflix
                             ? `document.querySelector('button[aria-label="Play"]').click();`
                             : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.play()});`
-const setRateVS     = ({value=1,targets=[0]}={})   => (value==0)?'':`${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.playbackRate = ${Math.min(ABS_MAX_SPEED,Math.max(ABS_MIN_SPEED,value))};});`
-const adjustRateVS  = ({value=0.1,targets=[0]}={}) => (value==0)?'':`${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{const n=(Math.trunc(e.playbackRate*100)+${Math.trunc(value*100)})/100;e.playbackRate=(n<${ABS_MIN_SPEED})?(e.pause(),e.VS_PAUSED=true,${ABS_MIN_SPEED}):n});`
-
-const errorHandler = (error='(none)') => {
-    if(++state.errorCount>2)
-        state.running=false
-    console.warn("(%i) %o",state.errorCount,error)
-}
-
-const updateStatus = (vid,selection) => {
-    if (vid) {
-        statusDiv.innerHTML = createStatus(vid,selection)
-        currentSpeed.innerText = 'x'+(Math.round(vid.playbackRate*100)/100)
-        resetTo1.classList.toggle('btn3disabled',vid.playbackRate===1)  
-        // chrome.browserAction.setBadgeText({text: shortSpeed.toString()});
-    } else {
-        errorHandler(Error('Status update failed, object: "vid" was empty'))
-        execVS(initVS)
-    }
-}
+const setRateVS     = ({value=1,targets=[0]}={})   => (value==0)
+                                                        ? ''
+                                                        : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.playbackRate = ${Math.min(ABS_MAX_SPEED,Math.max(ABS_MIN_SPEED,value))};});`
+const adjustRateVS  = ({value=0.1,targets=[0]}={}) => (value==0)
+                                                        ? ''
+                                                        : `${fetchVideos}
+                                                        .filter(e=>Math.ceil(e.duration))
+                                                        .forEach(e=>{
+                                                            const n=((0|e.playbackRate*100)+${(value*100)|0})/100;
+                                                            e.playbackRate=(n<${ABS_MIN_SPEED})
+                                                                ?(e.pause(),e.VS_PAUSED=true,${ABS_MIN_SPEED})
+                                                                :n});`
 
 
+const adjustVolVS  = ({value=0.1,targets=[0]}={}) => (value==0)
+                                                        ? ''
+                                                        : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.volume=Math.min(1,Math.max(0,((0|e.volume*100)+${0|value*100})/100));});`
+
+// takes a function with separate params, this lets us see/report the function's name
+// fetches video list/status EVERY TIME to get our end-state confirmation, so we sync with it.
 const execVS = async (cmd, options = {}, log=false) => {
-    if(!state.running) return false
+    if(state.mode===modes.disabled){
+        updateStatus({mode:2,playbackRate:0},['mode'])
+        return false  
+    } 
     let cmdStr = ''
     return chrome.tabs.executeScript({ code: (cmd ? cmdStr = cmd(options) : '')+getStatusVS() })
         .then(([result, ...rest]) => {
             if (log || (cmd && cmd.name === 'initVS'))
                 console.log('%s %o %s :: %o', cmd ? cmd.name : '?', options, cmdStr, result)
-            setSpaceIcon(arePlaying(result))
-            if (statusDiv && statusDiv.style.display!=='none') {
-                const vid = isActive(result) || isReady(result)
-                updateStatus(vid,state.complete.multiCheckStatus)
-            }
+            syncSpaceIcon(arePlaying(result))
+            const vid = isActive(result) || isReady(result)
+            updateStatus(vid,state.complete.optStatusItems)
             return result
         })
         .catch(errorHandler)
 } 
+
+
 
 // tea for "mother"
 const processEvents = (cmd, data) => {
@@ -172,10 +216,10 @@ const processEvents = (cmd, data) => {
             }
             break
         case "arrowup":
-            execVS(adjustRateVS, { value: fraction })
+            execVS(altKey?adjustVolVS:adjustRateVS, { value: fraction })
             break
         case "arrowdown":
-            execVS(adjustRateVS, { value: -fraction })
+            execVS(altKey?adjustVolVS:adjustRateVS, { value: -fraction })
             break
         case "arrowleft":
             execVS(skipVS, { value: -(altKey ? 60 : shiftKey ? 10 : factor) })
@@ -192,9 +236,12 @@ const processEvents = (cmd, data) => {
             break
         case "keyd":
         case "keys":
+            if(altKey) {
+                toggleDarkMode()
+                break
+            }
             toggleStatus()
             break
-        case "f1":
         case "keyh":
             toggleHelp()
         break
@@ -216,10 +263,13 @@ const getConfig = async () => {
             [state.activeTab]=result
             const root = state.activeTab.url.split('/')[2]
             if('jdkpkicnabpkbgpidgepdocnmjcnoagm'===root){
-                state.running=false
-                statusDiv.innerHTML = 'Options page found.<br>No active video.'
+                state.mode=modes.disabled
+                updateStatus({mode:2},['mode'])
+                //statusDiv.innerHTML = 'Options page found.<br>No active video.'
             }
-            state.netflix=(/netflix/.test(root))
+            if(/netflix/.test(root)){
+                state.mode=modes.netflix
+            }
         })
         .catch(errorHandler)
 
@@ -228,10 +278,12 @@ const getConfig = async () => {
             console.log('stored: %o',stored);
             state.complete = VSoptions.reduce((a,e)=>{a[e.name]=(stored.hasOwnProperty(e.name)?stored[e.name]:e.origin); return a},{})
             console.log('complete: %o',state.complete);
-            resizeControls.forEach(e=>e.style.fontSize=state.complete.selUISize)
-            statusDiv.style.fontSize = (9+fontSizes.indexOf(state.complete.selUISize))+'px'
-            state.hiddenStatus =  state.complete.selHideStatus
-            logo.classList.toggle('hidden',state.complete.selHideLogo)
+            resizeControls.forEach(e=>e.style.fontSize=state.complete.optUISize)
+            statusDiv.style.fontSize = (9+fontSizes.indexOf(state.complete.optUISize))+'px'
+            statusDiv.classList.toggle('hidden',state.complete.optHideStatus)
+            logo.classList.toggle('hidden',state.complete.optHideLogo)
+            if(state.complete.optDarkMode) 
+                processEvents('keyd',{altKey:true})
             return state.complete
         })
         .catch(errorHandler)
@@ -262,23 +314,15 @@ window.onload = ()=>{
 
     // add listeners
     listenerControls.forEach(e=>{e.addEventListener('click',mouseEvent)})
-
     document.addEventListener('keydown',keyEvent);
 
-    [...document.querySelectorAll('.toggleStatus')].forEach(e=>{
-        e.addEventListener('dblclick', event => {
-            statusDiv.classList.toggle('hidden')
-        })
+    [...document.querySelectorAll('.ctrlStatus')].forEach(e => {
+            e.addEventListener('dblclick', toggleStatus)
     })
-    help.addEventListener('click',toggleHelp);
-    helpDiv.addEventListener('click',toggleHelp);
-
-    state.config = getConfig()
-        .then(complete => {
-            execVS()
-            if(complete.selRefreshRate)
-                setInterval(()=>{if(state.running)execVS()},complete.selRefreshRate)
-            return complete
+    helpIcon.addEventListener('click', toggleHelp);
+    getConfig()
+        .then((complete)=>{
+            setInterval(() => { execVS() }, complete.optRefreshRate)
         })
         .catch(errorHandler)
 }
