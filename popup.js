@@ -154,9 +154,10 @@ const skipVS        = ({value=0,targets=[0]}={})   => (value==0)
                             ? (`document.querySelector('button[aria-label="Seek ${value>0?"Forward":"Back"}"]').click();`)
                             : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.currentTime += ${value}});`
 
-x
+
 const pauseVS       = ({targets=[0]}={})           => state.mode===modes.netflix
                             ? `document.querySelector('button[aria-label="Pause"]').click();`
+                            : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.pause()});`
 const playVS        = ({targets=[0]}={})           => state.mode===modes.netflix
                             ? `document.querySelector('button[aria-label="Play"]').click();`
                             : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.play()});`

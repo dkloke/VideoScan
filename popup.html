@@ -7,7 +7,7 @@
         user-select: none; 
         color:#444;
         margin: 0;
-        padding: 0.4em;
+        padding: 1vw;
     }
     #helpDiv {
         user-select: auto;
@@ -138,12 +138,11 @@
     div #logo {
         margin-bottom: 0.5em;
         padding-bottom: 0.5em; 
-        border-bottom: 1px solid #ddd; 
     }
     .hidden { display: none; }
     .red {color:red;}
     .blue {color:#2196f3;}
-    .shadow {
+    .noButton {
         width: 3em;
         text-align: center;
         font-size: inherit;
@@ -151,6 +150,9 @@
     }
     .title {
         font-size: 10vw;
+    }
+    .darkShadow {
+        -webkit-filter: drop-shadow(18px 18px 10px rgba(255,255,255,0.4));
     }
 </style>
 <!-- =============================== -->
@@ -163,15 +165,15 @@
 <body>
     <i id='helpIcon' class="far fa-question-circle" aria-title="Toggle Action/Help"></i>
     <div id='logo' class="flexRow ctrlStatus" aria-title="Double click to show/hide status">
-        <img class="flexChild" src="images/videoscan128.png">
+        <img class="flexChild darkShadow" src="images/videoscan128.png">
         <h2 class="flexChild title">VideoScan</h2>
         </img>
     </div>
     <div id='actionDiv' class="flexColumn fullWidth">
         <div class="flexRow flexChild">
-            <div  aria-title="Current Playback Speed" class="shadow flexChild" id="currentSpeed">x1</div>
+            <div  aria-title="Current Playback Speed" class="noButton flexChild" id="currentSpeed">x1</div>
             <div  aria-title="Faster" class="btn flexChild altBtn" id="arrowUp" tab="1"><i class="fa fa-arrow-up"></i></div>
-            <div  aria-title="Reset to 1" class="shadow flexChild"><i id="resetTo1" class="fa fa-undo btn2 btn2disabled"></i></div>
+            <div  aria-title="Reset to 1" class="noButton flexChild"><i id="resetTo1" class="fa fa-undo btn2 btn2disabled"></i></div>
         </div>
         <div class="flexRow flexChild">
             <div  aria-title="Back 1 sec (ctrl x0.1)" class="btn flexChild" id="arrowLeft" tab="2"><i class="fa fa-arrow-left"></i></div>
