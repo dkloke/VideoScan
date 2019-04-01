@@ -50,9 +50,12 @@ const isActive   = (arrVS) => Array.isArray(arrVS)
     : null
 const rxIsDigit  = /^[1-9]$/
 const getIcon= (element) => element.children[0]
+const getProps = (obj,propList) =>{
+    return propList.reduce((a,e)=>{a[e]=obj[e];return a},{})
+}
 
 const toggleStatus = () =>{
-        statusDiv.classList.toggle('hidden')
+    statusDiv.classList.toggle('hidden')
 }
 const toggleHelp = () =>{
     actionDiv.classList.toggle('hidden')
@@ -65,14 +68,16 @@ const toggleDarkMode = () => {
     }
     self.body.classList.toggle('darkMode')
 }
+const togglePausePlay = () => {
+    const { classList } = getIcon(spaceBar)
+    classList.toggle("fa-pause")
+    return classList.toggle("fa-play")
+}
 const syncSpaceIcon = (playing = arePlaying()) => {
     const classList = getIcon(spaceBar).classList
     classList.remove("fa-stop")
     classList.toggle("fa-play",!playing)
     classList.toggle("fa-pause",playing)
-}
-const getProps = (obj,propList) =>{
-    return propList.reduce((a,e)=>{a[e]=obj[e];return a},{})
 }
 
 const formatVid = (set) => {    
@@ -105,7 +110,7 @@ const createStatus =  (formatted,target) =>{
         .forEach(name => {
             let p=document.createElement('p'),
                 s=document.createElement('span')
-            p.innerText=name
+            p.innerText=name+':'
             s.innerText=formatted[name]
             s.id=idPrefix+name
             p.appendChild(s)
@@ -134,7 +139,7 @@ const updateStatus = (vid={playbackRate:1},selection) => {
     }
 }
 
-const DUMMY_ID = 'VIDEOSPEED_DUMMY'
+const DUMMY_ID = 'VIDEOSCAN_DUMMY'
 const ABS_MAX_SPEED = 9
 const ABS_MIN_SPEED = 0.1 //0.07
 
@@ -148,10 +153,10 @@ const skipVS        = ({value=0,targets=[0]}={})   => (value==0)
                         : state.mode===modes.netflix
                             ? (`document.querySelector('button[aria-label="Seek ${value>0?"Forward":"Back"}"]').click();`)
                             : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.currentTime += ${value}});`
+
+x
 const pauseVS       = ({targets=[0]}={})           => state.mode===modes.netflix
                             ? `document.querySelector('button[aria-label="Pause"]').click();`
-                            : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{if(!e.paused){e.VS_PAUSED=true;e.pause()}});`
-const unPauseVS     = ({}={})                      => `${fetchVideos}.filter(e=>e.VS_PAUSED).forEach(e=>{e.VS_PAUSED=false;e.play()});`
 const playVS        = ({targets=[0]}={})           => state.mode===modes.netflix
                             ? `document.querySelector('button[aria-label="Play"]').click();`
                             : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.play()});`
@@ -167,11 +172,7 @@ const adjustRateVS  = ({value=0.1,targets=[0]}={}) => (value==0)
                                                             e.playbackRate=(n<${ABS_MIN_SPEED})
                                                                 ?(e.pause(),e.VS_PAUSED=true,${ABS_MIN_SPEED})
                                                                 :n});`
-
-
-const adjustVolVS  = ({value=0.1,targets=[0]}={}) => (value==0)
-                                                        ? ''
-                                                        : `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.volume=Math.min(1,Math.max(0,((0|e.volume*100)+${0|value*100})/100));});`
+const adjustVolVS  = ({value=0.1,targets=[0]}={}) => (value==0) ? '': `${fetchVideos}.filter(e=>Math.ceil(e.duration)).forEach(e=>{e.volume=Math.min(1,Math.max(0,((0|e.volume*100)+${0|value*100})/100));});`
 
 // takes a function with separate params, this lets us see/report the function's name
 // fetches video list/status EVERY TIME to get our end-state confirmation, so we sync with it.
@@ -193,8 +194,6 @@ const execVS = async (cmd, options = {}, log=false) => {
         .catch(errorHandler)
 } 
 
-
-
 // tea for "mother"
 const processEvents = (cmd, data) => {
     const { code, key, altKey, ctrlKey, shiftKey } = data
@@ -206,12 +205,9 @@ const processEvents = (cmd, data) => {
         case "space":
         case "spacebar":
         //take own displayed state, if it's wrong at this point the click is redundant, so be it
-            const { classList } = getIcon(spaceBar)
-            classList.toggle("fa-pause")
-            if (classList.toggle("fa-play")) {
+            if (togglePausePlay()) {
                 execVS(pauseVS)
             } else {
-                execVS(unPauseVS)
                 execVS(playVS)
             }
             break

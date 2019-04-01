@@ -6,15 +6,17 @@ from a tweet by [@kentcdodds](https://twitter.com/kentcdodds/status/106963730045
 #
 Use keboard or mouse/touch to adjust video playback rate.
 
-Key|Action|Regular|Control|Shift
+Key|Action|Regular|Control|Shift|Alt
 ---|---|:-:|:-:|:-:|
-&uarr;&nbsp;Up&nbsp;arrow|Faster&nbsp;playrate|+0.1|+0.01|
-&darr;&nbsp;Down&nbsp;arrow|Slower&nbsp;playrate|-0.1|-0.01|
-&larr;&nbsp;Left&nbsp;arrow|Skip&nbsp;Back|-1s|-10s|-1m
-&rarr;&nbsp;Right&nbsp;arrow|Skip&nbsp;Forward|+1s|+10s|+1m
+&uarr;&nbsp;Up&nbsp;arrow|Faster&nbsp;playrate|+0.1|+0.01||Volume +0.1
+&darr;&nbsp;Down&nbsp;arrow|Slower&nbsp;playrate|-0.1|-0.01||Volume -0.1
+&larr;&nbsp;Left&nbsp;arrow|Skip&nbsp;Back|-1s|-0.1s|-10s|-1m|
+&rarr;&nbsp;Right&nbsp;arrow|Skip&nbsp;Forward|+1s|+0.1s|+10s|+1m
 Space&nbsp;bar|Pause|
 1 2 3 4 5 6 7 8 9|Playback&nbsp;speed|x1&nbsp;-&nbsp;x9|x0.1&nbsp;-&nbsp;x0.9
 R,&nbsp;N|Reset&nbsp;to&nbsp;Normal|x1|x1&nbsp;+&nbsp;Pause
+S,&nbsp;S|Toggle&nbsp;status&nbsp;display|||Toggle dark
+H,&nbsp;F1|Toggle&nbsp;help
 #
 VideoScan issues commands to the &lt;`video`&gt; element as you type or click/tap while the popup is active and has focus. The responsiveness of the page's video player depends on hardware performance, network bandwidth, and on-page application code.
 
