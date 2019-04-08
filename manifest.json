@@ -1,8 +1,8 @@
 {
   "name": "VideoScan",
-  "version": "1.0.2",
-  "description": "Adjust playback speed of video elements on page.",
-  "permissions": ["activeTab", "tabs", "declarativeContent","storage"],
+  "version": "1.0.5",
+  "description": "Adjust playback speed of video in the browser.",
+  "permissions": ["activeTab", "declarativeContent", "storage"],
   "options_page": "options.html",
   "background": {
     "scripts": ["background.js"],
@@ -23,16 +23,10 @@
     "48": "images/videoscan48.png",
    "128": "images/videoscan128.png"
   },
-  "commands": {
-    "toggle-VideoScan": {
-      "suggested_key": {
-        "default": "Alt+V"
-      },
-      "description": "Toggle VideoScan"
+  "applications": {
+    "gecko": {
+      "id": "videospeed@syntheticsys.net"
     }
   },
-  "web_accessible_resources": [
-    "popup.html"
-  ],
   "manifest_version": 2
 }

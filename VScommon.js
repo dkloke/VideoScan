@@ -1,11 +1,11 @@
 // isn't there somewhere I can load this from?
 const fontSizes = ["xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large", ]
-const makeSpan = (text,colorClass) => `<span class="${colorClass}">${text}</span>`
+const makeSpan  = (text,colorClass) => `<span class="${colorClass}">${text}</span>`
 
 // read/write bitmaps from a master array (which then becomes very fragile!!! so let's not do this. )
 const writeBM = (key) => 
     (mask) => key.reduce((a,e,i)=> mask.indexOf(e)>-1 ? a += 1 << i : a , 0)
-const readBM = (key) => 
+const readBM  = (key) => 
     (BM)   => key.reduce((a,e,i)=> BM & (1 << i) ? [...a,e] : a , [])
 
 const fetchList = {
@@ -37,6 +37,6 @@ const VSoptions = [
     {name:"optHideStatus",    origin:false,     kind:'checked', convert:'Boolean',},
     {name:"optRefreshRate",   origin:333,},
     {name:"optHideLogo",      origin:false,     kind:'checked', convert:'Boolean',},
-    {name:"optStatusItems", origin:fetchList.initialDefault},
+    {name:"optStatusItems",   origin:fetchList.initialDefault},
     {name:"optDarkMode",      origin:false,     kind:'checked', convert:'Boolean',},
 ]

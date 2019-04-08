@@ -6,6 +6,7 @@
 // assumes/uses chrome-extension-async.js
 // assumes/uses VScommon.js
 
+
 // get elements
 const logo         = document.getElementById('logo')
 const actionDiv    = document.getElementById('actionDiv')

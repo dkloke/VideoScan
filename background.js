@@ -11,11 +11,11 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 let i=0
-chrome.commands.onCommand.addListener(function(command) {
+/*chrome.commands.onCommand.addListener(function(command) {
   if(command==="toggle-VideoScan"){
     // new chrome.declarativeContent.ShowPageAction()
       chrome.browserAction.setBadgeText({text: (i++).toString()});
   }
   console.log('Command:', command);
  // chrome.browserAction.setPopup("popup.html")
-});
+});*/
